@@ -1,0 +1,23 @@
+{
+  "name": "hydrogen-timesheet",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "check-syntax": "tsc -w",
+    "dev": "ts-node-dev  --respawn  ./src/index.ts --watch"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "hummus-recipe": "^1.9.0"
+  },
+  "devDependencies": {
+    "@types/hummus-recipe": "^1.8.3",
+    "@types/node": "^12.12.21",
+    "ts-node-dev": "^1.0.0-pre.44",
+    "typescript": "^3.7.4"
+  }
+}
