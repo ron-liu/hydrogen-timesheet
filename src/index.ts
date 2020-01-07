@@ -1,5 +1,6 @@
 import HummusRecipe from "hummus-recipe";
-import { TimeSpanCreatorParams } from "./time-span";
+import { CreateTimeSpanParams } from "./time-span";
+import { Timesheet } from "./timesheet";
 
 const fillForm = (config: Config) => (timesheet: Timesheet) => {
   const pdfDoc = new HummusRecipe("./template.pdf", "./output.pdf");
@@ -59,5 +60,5 @@ type Config = {
     position: string;
   };
   client: string;
-  defaultTimeSpan: TimeSpanCreatorParams;
+  defaultTimeSpan: CreateTimeSpanParams;
 };
