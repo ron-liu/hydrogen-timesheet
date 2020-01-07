@@ -11,6 +11,7 @@ import {
 import { addDays, isWeekend, isSameDay, startOfDay, compareAsc } from 'date-fns'
 import binarySearch from 'binary-search'
 import { range, pipe, map, ifElse, isNil, filter, flatten, reduce } from 'ramda'
+import { createDate } from './utils'
 export const createTimesheet = (
   params: CreateTimesheetParams
 ): FunctionResult<Timesheet> => {
@@ -40,6 +41,7 @@ export const createTimesheet = (
     .reduce((acc, x) => [...acc, ...x], [])
   console.log(122, timeSpans)
   console.log(2233, timeSpansErrors)
+  console.log(4444, publicHolidays)
 
   if (timeSpansErrors.length > 0) {
     return { errors: timeSpansErrors }
@@ -105,7 +107,7 @@ const normaliseCreateTimesheetParams = (
   const { startedAt: startDate, exceptions = [] } = params
   return {
     ...params,
-    startedAt: startOfDay(startDate),
+    startedAt: startDate,
     exceptions: exceptions.sort((a, b) => a.date.getTime() - b.date.getTime()),
   }
 }
@@ -129,18 +131,18 @@ const isWorkingDay = (day: Date): boolean => {
 }
 
 const publicHolidays = [
-  new Date(2019, 11, 24),
-  new Date(2019, 11, 25),
-  new Date(2020, 0, 1),
-  new Date(2020, 0, 27),
-  new Date(2020, 2, 9),
-  new Date(2020, 3, 10),
-  new Date(2020, 3, 13),
-  new Date(2020, 3, 25),
-  new Date(2020, 5, 8),
-  new Date(2020, 10, 3),
-  new Date(2020, 11, 25),
-  new Date(2020, 11, 28),
+  createDate(2019, 12, 24),
+  createDate(2019, 12, 25),
+  createDate(2020, 1, 1),
+  createDate(2020, 1, 27),
+  createDate(2020, 3, 9),
+  createDate(2020, 4, 10),
+  createDate(2020, 4, 13),
+  createDate(2020, 4, 25),
+  createDate(2020, 6, 8),
+  createDate(2020, 11, 3),
+  createDate(2020, 12, 25),
+  createDate(2020, 12, 28),
 ]
 
 type ExceptedEntry = {
