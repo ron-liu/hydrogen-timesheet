@@ -1,17 +1,19 @@
-import { TimeSpan, CreateTimeSpanParams, createTimeSpan } from './time-span'
+import { TimeSpan, createTimeSpan } from './time-span'
 import { Validator, validateParams } from './validate'
 import {
   FunctionResult,
-  Errors,
-  isGoodFunctionResult,
   isBadFunctionResult,
-  BadFunctionResult,
   GoodFunctionResult,
+  CreateTimeSpanParams,
+  CreateTimesheetParams,
+  ExceptedEntry,
+  Time,
 } from './types'
-import { addDays, isWeekend, isSameDay, startOfDay, compareAsc } from 'date-fns'
+import { addDays, isWeekend } from 'date-fns'
 import binarySearch from 'binary-search'
-import { range, pipe, map, ifElse, isNil, filter, flatten, reduce } from 'ramda'
-import { createDate } from './utils'
+import { range, pipe, map, ifElse, isNil } from 'ramda'
+import { createDate, createTime } from './utils'
+
 export const createTimesheet = (
   params: CreateTimesheetParams
 ): FunctionResult<Timesheet> => {
@@ -39,9 +41,6 @@ export const createTimesheet = (
     .filter(x => isBadFunctionResult(x))
     .map(x => x.errors ?? [])
     .reduce((acc, x) => [...acc, ...x], [])
-  console.log(122, timeSpans)
-  console.log(2233, timeSpansErrors)
-  console.log(4444, publicHolidays)
 
   if (timeSpansErrors.length > 0) {
     return { errors: timeSpansErrors }
@@ -55,17 +54,14 @@ export const createTimesheet = (
         ),
         total: timeSpans
           .map(x => (x as GoodFunctionResult<TimeSpan>).result.totalWork)
-          .reduce(
-            (acc, x) => new Date(acc.getTime() + x.getTime()),
-            new Date(0)
-          ),
+          .reduce((acc, x) => acc.add(x), createTime(0)),
       },
     }
   }
 }
 
 const getTimeSpanForNonWorkingDay = (date: Date): FunctionResult<TimeSpan> => ({
-  result: { comment: 'Weekend or Holiday', totalWork: new Date(0), date },
+  result: { comment: 'Weekend or Holiday', totalWork: createTime(0), date },
   errors: [],
 })
 
@@ -113,10 +109,10 @@ const normaliseCreateTimesheetParams = (
 }
 
 export type Timesheet = {
-  createdAt?: Date
+  createdAt: Date
   startedAt: Date
   timeSpans: Array<TimeSpan>
-  total: Date
+  total: Time
 }
 
 const isWorkingDay = (day: Date): boolean => {
@@ -144,18 +140,5 @@ const publicHolidays = [
   createDate(2020, 12, 25),
   createDate(2020, 12, 28),
 ]
-
-type ExceptedEntry = {
-  date: Date
-  timeSpan: CreateTimeSpanParams
-}
-
-type CreateTimesheetParams = {
-  createdAt: Date
-  startedAt: Date
-  countOfDays: number
-  defaultTimeSpan: CreateTimeSpanParams
-  exceptions?: ExceptedEntry[]
-}
 
 type CreateTimesheetValidator = Validator<CreateTimesheetParams>

@@ -1,64 +1,60 @@
-import HummusRecipe from "hummus-recipe";
-import { CreateTimeSpanParams } from "./time-span";
-import { Timesheet } from "./timesheet";
+import { fillForm } from './fill'
+import { Config, CreateTimesheetParams, isBadFunctionResult } from './types'
+import { createTimesheet, Timesheet } from './timesheet'
+import { createDate, createTime } from './utils'
 
-const fillForm = (config: Config) => (timesheet: Timesheet) => {
-  const pdfDoc = new HummusRecipe("./template.pdf", "./output.pdf");
-  generateActions(config)
-    .reduce((prev, act) => act(prev), pdfDoc.editPage(1))
-    .endPage()
-    .endPDF();
-  console.log("done");
-};
-
-const generateActions = (
-  config: Config
-): Array<(x: HummusRecipe) => HummusRecipe> => {
-  const { client, consultant, reportTo } = config;
-  return [
-    p => p.text(consultant.name, 140, 106, { color: BLACK, size: 20 }),
-    p => p.text(client, 140, 152, { color: BLACK, size: 20 }),
-    p =>
-      p.text(consultant.purchaseOrderNumber, 450, 152, {
-        color: BLACK,
-        size: 20
-      }),
-    p => p.text(consultant.name, 130, 611, { color: BLACK, size: 16 }),
-    p => p.text(consultant.position, 130, 650, { color: BLACK, size: 16 }),
-    p => p.text(reportTo.name, 130, 688, { color: BLACK, size: 16 }),
-    p => p.text(reportTo.name, 393, 611, { color: BLACK, size: 16 }),
-    p => p.text(reportTo.position, 393, 650, { color: BLACK, size: 16 }),
-    p => p.text("N/A", 393, 688, { color: BLACK, size: 16 })
-  ];
-};
-
-const BLACK = [0, 0, 0];
-
-fillForm({
-  consultant: {
-    name: "Ron Liu",
-    position: "Dev",
-    purchaseOrderNumber: "100342"
-  },
-  client: "Seek",
-  reportTo: { name: "Jamie Matcalfe", position: "DM" },
-  defaultTimeSpan: {
-    start: new Date(8 * 3600 * 1000),
-    end: new Date(16.5 * 3600 * 1000),
-    breaks: new Date(0.5 * 3600 * 1000)
+const main = () => {
+  const timesheet = createTimesheet(timesheetParams)
+  if (isBadFunctionResult<Timesheet>(timesheet)) {
+    console.error('Error occurs: ', timesheet.errors.join('\n'))
+    process.exit(-1)
   }
-})({});
+  fillForm(config)(timesheet.result)
+}
 
-type Config = {
+const config: Config = {
   consultant: {
-    name: string;
-    position: string;
-    purchaseOrderNumber: string;
-  };
-  reportTo: {
-    name: string;
-    position: string;
-  };
-  client: string;
-  defaultTimeSpan: CreateTimeSpanParams;
-};
+    name: 'Ron Liu',
+    position: 'Dev',
+    purchaseOrderNumber: '100342',
+  },
+  client: 'Seek',
+  reportTo: { name: 'Jamie Matcalfe', position: 'DM' },
+  defaultTimeSpan: {
+    start: createTime(8),
+    end: createTime(16, 30),
+    breaks: createTime(0, 30),
+  },
+}
+
+const timesheetParams: CreateTimesheetParams = {
+  countOfDays: 14,
+  createdAt: new Date(),
+  startedAt: createDate(2019, 12, 30),
+  defaultTimeSpan: {
+    start: createTime(8),
+    end: createTime(16, 30),
+    breaks: createTime(0, 30),
+  },
+  exceptions: [
+    // {
+    //   date: createDate(2019, 12, 17),
+    //   timeSpan: {
+    //     start: createTime(8),
+    //     end: createTime(14, 30),
+    //     breaks: createTime(0, 30),
+    //     comment: 'Left at 2:30pm',
+    //   },
+    // },
+    // {
+    //   date: createDate(2019, 12, 20),
+    //   timeSpan: {
+    //     start: createTime(8),
+    //     end: createTime(12),
+    //     comment: 'Worked half day',
+    //   },
+    // },
+  ],
+}
+
+main()
