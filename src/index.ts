@@ -29,7 +29,7 @@ const config: Config = {
 
 const timesheetParams: CreateTimesheetParams = {
   countOfDays: 14,
-  createdAt: new Date(),
+  createdAt: new Date(2020, 0, 10),
   startedAt: createDate(2019, 12, 30),
   defaultTimeSpan: {
     start: createTime(8),
