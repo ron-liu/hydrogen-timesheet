@@ -1,5 +1,5 @@
 import { TimeSpan, createTimeSpan } from './time-span'
-import { Validator, validateParams } from './validate'
+import { Validator, validateParams } from '../utils/validate'
 import {
   FunctionResult,
   isBadFunctionResult,
@@ -8,11 +8,11 @@ import {
   CreateTimesheetParams,
   ExceptedEntry,
   Time,
-} from './types'
+} from '../types'
 import { addDays, isWeekend } from 'date-fns'
 import binarySearch from 'binary-search'
 import { range, pipe, map, ifElse, isNil } from 'ramda'
-import { createDate, createTime } from './utils'
+import { createDate, createTime } from '../utils/date-time'
 
 export const createTimesheet = (
   params: CreateTimesheetParams

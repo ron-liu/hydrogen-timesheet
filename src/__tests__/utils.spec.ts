@@ -1,4 +1,4 @@
-import { createTime } from '../utils'
+import { createTime } from '../utils/date-time'
 
 it('createTime should work', () => {
   const t = createTime(11, 45)

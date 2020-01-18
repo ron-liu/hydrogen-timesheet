@@ -1,7 +1,7 @@
-import { fillForm } from './fill'
+import { fillForm } from './pdf/fill'
 import { Config, CreateTimesheetParams, isBadFunctionResult } from './types'
-import { createTimesheet, Timesheet } from './timesheet'
-import { createDate, createTime } from './utils'
+import { createTimesheet, Timesheet } from './time-sheet/timesheet'
+import { createDate, createTime } from './utils/date-time'
 
 const main = () => {
   const timesheet = createTimesheet(timesheetParams)

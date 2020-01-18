@@ -1,5 +1,5 @@
-import { createTimeSpan } from '../time-span'
-import { createTime } from '../utils'
+import { createTimeSpan } from '../time-sheet/time-span'
+import { createTime } from '../utils/date-time'
 
 it('createTimeSpan should work', () => {
   const date = new Date(2019, 11, 24)
