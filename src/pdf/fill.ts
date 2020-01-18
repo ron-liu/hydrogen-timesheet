@@ -1,7 +1,7 @@
 import HummusRecipe from 'hummus-recipe'
-import { Timesheet } from './timesheet'
+import { Timesheet } from '../time-sheet/timesheet'
 import { format } from 'date-fns'
-import { Config } from './types'
+import { Config } from '../types'
 
 export const fillForm = (config: Config) => (timesheet: Timesheet) => {
   const pdfDoc = new HummusRecipe('./template.pdf', './output.pdf')

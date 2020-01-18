@@ -1,5 +1,5 @@
 import { format } from 'date-fns'
-import { Time } from './types'
+import { Time } from '../types'
 
 export const createTime = (hours: number, minutes: number = 0): Time => {
   const date: [number, number, number] = [

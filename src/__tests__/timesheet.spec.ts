@@ -1,5 +1,5 @@
-import { createTimesheet } from '../timesheet'
-import { createTime, createDate } from '../utils'
+import { createTimesheet } from '../time-sheet/timesheet'
+import { createTime, createDate } from '../utils/date-time'
 
 it('normal should work', () => {
   const timesheet = createTimesheet({
