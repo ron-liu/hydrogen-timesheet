@@ -61,8 +61,6 @@ export type TimeSpan = {
   start?: Time
   end?: Time
   breaks?: Time
-  standardWork?: Time
-  overwork?: Time
   totalWork: Time
   comment: string
 }

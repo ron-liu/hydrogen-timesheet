@@ -1,5 +1,5 @@
-import { createTimeSpan } from '../time-sheet/time-span'
-import { createTime } from '../utils/date-time'
+import { createTimeSpan } from '../time-span'
+import { createTime } from '../../utils/date-time'
 
 it('createTimeSpan should work', () => {
   const date = new Date(2019, 11, 24)
@@ -16,15 +16,13 @@ it('createTimeSpan should work', () => {
     },
     date
   )
-  expect(timeSpan).toEqual({
+  expect(timeSpan).toMatchObject({
     result: {
       date,
-      start,
-      end,
-      breaks,
-      standardWork: createTime(8),
-      overwork: new Date(0),
-      totalWork: createTime(8),
+      start: { hours: 8 },
+      end: { hours: 16 },
+      breaks: { hours: 0, minutes: 30 },
+      totalWork: { hours: 8, minutes: 0 },
       comment,
     },
   })
