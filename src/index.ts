@@ -1,60 +1,39 @@
-import { fillForm } from './pdf/fill'
-import { Config, CreateTimesheetParams, isBadFunctionResult } from './types'
-import { createTimesheet, Timesheet } from './time-sheet/timesheet'
-import { createDate, createTime } from './utils/date-time'
+import { Command, Option } from 'commander'
+import { prompt } from 'enquirer'
+import { TimeSpan } from './time-sheet/time-span'
+import { CreateTimeSpanParams } from './types'
 
-const main = () => {
-  const timesheet = createTimesheet(timesheetParams)
-  if (isBadFunctionResult<Timesheet>(timesheet)) {
-    console.error('Error occurs: ', timesheet.errors.join('\n'))
-    process.exit(-1)
-  }
-  fillForm(config)(timesheet.result)
+const program = new Command()
+
+const run = async () => {
+  program
+    .command('config')
+    .option('-n, --name <name>', 'your name')
+    .option('-p --position <position>', 'your postion')
+    .option(
+      '-o --purchaseOrderNumber <purchaseOrderName>',
+      'purchase order number'
+    )
+    .option('-c --client <client>', 'client')
+    .option('-r --reportTo <reportTo>', 'report to')
+    .option('-t --reportToPosition <reportToPosition>', 'position of report to')
+    .option(
+      '-d --defaultTimeSpan <defaultTimeSpan>',
+      'default time span, format: {start} to {end}[, break], like: 8:30 to 14:30, 00:30'
+    )
+    .action(command => {
+      const optionsMap = getOptionMap(command.options)
+      console.log('options map', optionsMap)
+    })
+
+  program.parse(process.argv)
 }
+const getOptionMap = (ops: Option[]): Map<string, Option> =>
+  ops.reduce(
+    (m: Map<string, Option>, item: Option) =>
+      m.set(item.long.replace('--', ''), item),
+    new Map()
+  )
 
-const config: Config = {
-  consultant: {
-    name: 'Ron Liu',
-    position: 'Dev',
-    purchaseOrderNumber: '100342',
-  },
-  client: 'Seek',
-  reportTo: { name: 'Jamie Matcalfe', position: 'DM' },
-  defaultTimeSpan: {
-    start: createTime(8),
-    end: createTime(16, 30),
-    breaks: createTime(0, 30),
-  },
-}
 
-const timesheetParams: CreateTimesheetParams = {
-  countOfDays: 14,
-  createdAt: new Date(),
-  startedAt: createDate(2020, 1, 13),
-  defaultTimeSpan: {
-    start: createTime(8),
-    end: createTime(16, 30),
-    breaks: createTime(0, 30),
-  },
-  exceptions: [
-    {
-      date: createDate(2020, 1, 24),
-      timeSpan: {
-        start: createTime(8),
-        end: createTime(15, 30),
-        breaks: createTime(0, 30),
-        comment: 'Left Office 12:30, WFH till 3:30pm',
-      },
-    },
-    // {
-    //   date: createDate(2019, 12, 20),
-    //   timeSpan: {
-    //     start: createTime(8),
-    //     end: createTime(12),
-    //     comment: 'Worked half day',
-    //   },
-    // },
-  ],
-}
-
-main()
+run()

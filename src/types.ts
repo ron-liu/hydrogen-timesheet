@@ -11,8 +11,10 @@ export const isBadFunctionResult = <T>(
   fr: FunctionResult<T>
 ): fr is BadFunctionResult<T> => (fr.errors?.length ?? 0) > 0
 export interface Time {
-  getTotalMiutes: () => number
-  get: () => [number, number, number]
+  readonly totalMiutes: number
+  readonly days: number
+  readonly hours: number
+  readonly minutes: number
   formatTime: () => string
   formatAll: () => string
   add: (x: Time) => Time
