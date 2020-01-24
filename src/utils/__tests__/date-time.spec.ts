@@ -47,4 +47,33 @@ it('parseCreateTimeParams should work', () => {
       breaks: { hours: 0, minutes: 30 },
     },
   })
+  expect(
+    parseCreateTimeSpanParams('8:30 to 16, 00:30, I am too tired')
+  ).toMatchObject({
+    result: {
+      start: { hours: 8, minutes: 30 },
+      end: { hours: 16, minutes: 0 },
+      breaks: { hours: 0, minutes: 30 },
+      comment: 'I am too tired',
+    },
+  })
+  expect(
+    parseCreateTimeSpanParams(
+      '   8   :     30      to      16,      00   :     30   ,      I am too tired'
+    )
+  ).toMatchObject({
+    result: {
+      start: { hours: 8, minutes: 30 },
+      end: { hours: 16, minutes: 0 },
+      breaks: { hours: 0, minutes: 30 },
+      comment: 'I am too tired',
+    },
+  })
+  expect(parseCreateTimeSpanParams('8:30 to 16')).toMatchObject({
+    result: {
+      start: { hours: 8, minutes: 30 },
+      end: { hours: 16, minutes: 0 },
+      breaks: { hours: 0, minutes: 0 },
+    },
+  })
 })
