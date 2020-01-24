@@ -30,22 +30,22 @@ const config: Config = {
 const timesheetParams: CreateTimesheetParams = {
   countOfDays: 14,
   createdAt: new Date(),
-  startedAt: createDate(2019, 12, 30),
+  startedAt: createDate(2020, 1, 13),
   defaultTimeSpan: {
     start: createTime(8),
     end: createTime(16, 30),
     breaks: createTime(0, 30),
   },
   exceptions: [
-    // {
-    //   date: createDate(2019, 12, 17),
-    //   timeSpan: {
-    //     start: createTime(8),
-    //     end: createTime(14, 30),
-    //     breaks: createTime(0, 30),
-    //     comment: 'Left at 2:30pm',
-    //   },
-    // },
+    {
+      date: createDate(2020, 1, 24),
+      timeSpan: {
+        start: createTime(8),
+        end: createTime(15, 30),
+        breaks: createTime(0, 30),
+        comment: 'Left Office 12:30, WFH till 3:30pm',
+      },
+    },
     // {
     //   date: createDate(2019, 12, 20),
     //   timeSpan: {
