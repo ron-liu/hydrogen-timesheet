@@ -1,3 +1,6 @@
+import { Command } from "commander"
+import { TimeSpan } from "./time-sheet/time-span"
+
 export type Errors = string[]
 export type GoodFunctionResult<T> = { result: T; errors?: Errors }
 export type BadFunctionResult<T> = { result?: T; errors: Errors }
@@ -54,4 +57,23 @@ export type CreateTimesheetParams = {
   countOfDays: number
   defaultTimeSpan: CreateTimeSpanParams
   exceptions?: ExceptedEntry[]
+}
+
+export type CommandArgument<T> = {
+  // name: string,
+  shortName: string,
+  description: string,
+  required: string,
+  parse?: (x: string) => T,
+  value: T
+}
+
+export type ConfigCommandArguments = {
+  name: CommandArgument<string>,
+  postion: CommandArgument<string>,
+  purchaseOrderNumber: CommandArgument<string>,
+  client: CommandArgument<string>,
+  reportTo: CommandArgument<string>,
+  reportToPostion: CommandArgument<String>,
+  defaultTimeSpan: CommandArgument<TimeSpan>
 }
