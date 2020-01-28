@@ -50,7 +50,7 @@ const fillTimespans = (
           ? [(p: HummusRecipe) => p.text(breaks.formatTime(), 210, y, small)]
           : []),
         (p: HummusRecipe) => p.text(totalWork.formatTime(), 390, y, small),
-        (p: HummusRecipe) => p.text(comment, 450, y, small),
+        (p: HummusRecipe) => p.text(comment, 445, y, xsmall),
       ]
     })
     .reduce<Array<(x: HummusRecipe) => HummusRecipe>>(
@@ -70,4 +70,5 @@ const BLACK = [0, 0, 0]
 const large = { color: BLACK, size: 20 }
 const medium = { color: BLACK, size: 16 }
 const small = { color: BLACK, size: 12 }
+const xsmall = { color: BLACK, size: 8 }
 type HummusFunc = (x: HummusRecipe) => HummusRecipe

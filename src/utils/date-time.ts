@@ -38,7 +38,7 @@ export const createTime = (hours: number, minutes: number = 0): Time => {
       )
     },
     formatWorkingDays: hoursInADay => {
-      return `${(_days * 24 + _hours + _minutes / 60) / hoursInADay} d`
+      return `${(_days * 24 + _hours + _minutes / 60) / hoursInADay}d`
     },
     lessThan: x => _totalMinutes < x.totalMiutes,
     isFirstDay: () => _days === 0,
