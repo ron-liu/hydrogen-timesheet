@@ -60,7 +60,6 @@ export type CreateTimesheetParams = {
 }
 
 export type CommandArgument<T> = {
-  // name: string,
   shortName: string
   description: string
   required: boolean
@@ -70,13 +69,14 @@ export type CommandArgument<T> = {
 
 export type ConfigCommandArguments = {
   fullName: CommandArgument<string>
-  postion: CommandArgument<string>
+  position: CommandArgument<string>
   purchaseOrderNumber: CommandArgument<string>
   client: CommandArgument<string>
   reportTo: CommandArgument<string>
-  reportToPostion: CommandArgument<string>
+  reportToPosition: CommandArgument<string>
   defaultTimeSpan: CommandArgument<CreateTimeSpanParams>
 }
-export type ConfigValue = {
-  [key in keyof ConfigCommandArguments]?: string
+
+export type ConfigCommandValue = {
+  [key in keyof ConfigCommandArguments]: string
 }

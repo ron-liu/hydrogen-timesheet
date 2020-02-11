@@ -3,19 +3,20 @@ import {
   CreateTimeSpanParams,
   isGoodFunctionResult,
   Config,
+  ConfigCommandValue,
 } from '../types'
-import { Validator, Validate, validateParams } from '../utils/validate'
+import { Validator, validateParams } from '../utils/validate'
 import { parseCreateTimeSpanParams } from '../utils/date-time'
 
 export const createConfig = (
-  params: CreateConfigParams
+  params: ConfigCommandValue
 ): FunctionResult<Config> => {
   const errors = validateParams([requiredAll, defaultTimeSpanAreParsed])(params)
   if (errors.length > 0) {
     return { errors }
   }
   const {
-    name,
+    fullName,
     position,
     purchaseOrderNumber,
     reportTo,
@@ -25,7 +26,7 @@ export const createConfig = (
   } = params
   return {
     result: {
-      consultant: { name, position, purchaseOrderNumber },
+      consultant: { name: fullName, position, purchaseOrderNumber },
       reportTo: { name: reportTo, position: reportToPosition },
       client,
       defaultTimeSpan: parseCreateTimeSpanParams(defaultTimeSpan).result!,
@@ -33,24 +34,14 @@ export const createConfig = (
   }
 }
 
-type CreateConfigParams = {
-  name: string
-  position: string
-  purchaseOrderNumber: string
-  client: string
-  reportTo: string
-  reportToPosition: string
-  defaultTimeSpan: string
-}
-
-const requiredAll: Validator<CreateConfigParams> = {
+const requiredAll: Validator<ConfigCommandValue> = {
   validate: params => Object.values(params).every(x => !!x),
-  message: params => `Not all property are provided`,
+  message: () => `Not all property are provided`,
 }
 
-const defaultTimeSpanAreParsed: Validator<CreateConfigParams> = {
+const defaultTimeSpanAreParsed: Validator<ConfigCommandValue> = {
   validate: params =>
     isGoodFunctionResult(parseCreateTimeSpanParams(params.defaultTimeSpan)),
-  message: params =>
+  message: () =>
     `The format is not right, should be: start to end[, break[, comment]], like: 8:00 to 16:30, 00:30`,
 }
