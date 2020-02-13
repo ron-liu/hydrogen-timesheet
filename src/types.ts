@@ -62,9 +62,14 @@ export type CreateTimesheetParams = {
 export type CommandArgument<T> = {
   shortName: string
   description: string
+  defaultValue?: T
   required: boolean
   parse?: (x: string) => T | undefined
   value?: T
+}
+
+export type CommandValue<CommandArguments> = {
+  [key in keyof CommandArguments]: string
 }
 
 export type ConfigCommandArguments = {
@@ -77,6 +82,10 @@ export type ConfigCommandArguments = {
   defaultTimeSpan: CommandArgument<CreateTimeSpanParams>
 }
 
-export type ConfigCommandValue = {
-  [key in keyof ConfigCommandArguments]: string
+export type CreateCommandArguments = {
+  countOfDays: CommandArgument<number>
+  createDate: CommandArgument<Date>
+  startedAt: CommandArgument<Date>
 }
+
+export type RawConfig = CommandValue<ConfigCommandArguments>

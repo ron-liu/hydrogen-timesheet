@@ -1,11 +1,11 @@
 import { Command, Option } from 'commander'
 import { prompt } from 'enquirer'
-import { ConfigCommandArguments, ConfigCommandValue } from '../types'
+import { ConfigCommandArguments, RawConfig } from '../types'
 import { parseCreateTimeSpanParams } from '../utils/date-time'
+import { initCommand, collectOptions } from '../utils/command'
 import Conf from 'conf'
 
 const conf = new Conf()
-const program = new Command()
 const configArguments: ConfigCommandArguments = {
   fullName: { shortName: 'f', description: 'your name', required: true },
   position: { shortName: 'p', description: 'your position', required: true },
@@ -34,31 +34,8 @@ const configArguments: ConfigCommandArguments = {
 }
 
 const run = async () => {
-  Object.entries(configArguments)
-    .reduce(
-      (command, [name, { shortName, description }]) =>
-        command.option(`-${shortName}, --${name} <${name}>`, description),
-      program
-    )
-    .parse(process.argv)
-
-  const config: Partial<ConfigCommandValue> = {}
-  for (const [name, value] of Object.entries(configArguments)) {
-    const { description, required, parse = (x: any) => x } = value
-    const key = name as keyof ConfigCommandArguments
-    if (!!program[name]) {
-      config[key] = program[name]
-      continue
-    }
-    const answer = (await prompt({
-      type: 'input',
-      name,
-      message: `What is your ${description}?`,
-      validate: (x: string) =>
-        (required && !!x && !!parse(x)) || (!required && (!x || !!parse(x))),
-    })) as any
-    config[key] = answer[key]
-  }
+  const program = initCommand(configArguments)
+  const config = await collectOptions(program, configArguments)
   conf.set(config)
   console.log(`Created config file located at ${conf.path}`)
 }

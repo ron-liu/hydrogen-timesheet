@@ -3,15 +3,13 @@ import {
   CreateTimeSpanParams,
   isGoodFunctionResult,
   Config,
-  ConfigCommandValue,
+  RawConfig,
 } from '../types'
 import { Validator, validateParams } from '../utils/validate'
 import { parseCreateTimeSpanParams } from '../utils/date-time'
 
-export const createConfig = (
-  params: ConfigCommandValue
-): FunctionResult<Config> => {
-  const errors = validateParams([requiredAll, defaultTimeSpanAreParsed])(params)
+export const createConfig = (params: RawConfig): FunctionResult<Config> => {
+  const errors = validateRawConfg(params)
   if (errors.length > 0) {
     return { errors }
   }
@@ -34,14 +32,16 @@ export const createConfig = (
   }
 }
 
-const requiredAll: Validator<ConfigCommandValue> = {
+const requiredAll: Validator<RawConfig> = {
   validate: params => Object.values(params).every(x => !!x),
   message: () => `Not all property are provided`,
 }
 
-const defaultTimeSpanAreParsed: Validator<ConfigCommandValue> = {
+const defaultTimeSpanAreParsed: Validator<RawConfig> = {
   validate: params =>
     isGoodFunctionResult(parseCreateTimeSpanParams(params.defaultTimeSpan)),
   message: () =>
     `The format is not right, should be: start to end[, break[, comment]], like: 8:00 to 16:30, 00:30`,
 }
+export const validateRawConfg = (rawConfg: RawConfig) =>
+  validateParams([requiredAll, defaultTimeSpanAreParsed])(rawConfg)
