@@ -1,7 +1,7 @@
 import { CreateCommandArguments } from '../types'
-import { parse } from 'date-fns'
-import { initCommand } from 'src/utils/command'
+import { parse, format } from 'date-fns'
 import { validateRawConfg } from 'src/config/create-config'
+import { initCommand, collectOptions } from 'src/utils/command'
 import Conf from 'conf'
 
 const conf = new Conf()
@@ -15,12 +15,12 @@ const createArguments: CreateCommandArguments = {
       if (!r || r > 14 || r < 1) return undefined
       return r
     },
-    defaultValue: 14,
+    defaultValue: '14',
   },
   createDate: {
     shortName: 'c',
-    description: 'date created, d/m/yy',
-    defaultValue: new Date(),
+    description: 'date created, d/M/yy',
+    defaultValue: format(new Date(), 'd/M/yy'),
     required: true,
     parse: (n: string) => {
       return parse(n, 'd/M/yy', new Date())
@@ -28,8 +28,8 @@ const createArguments: CreateCommandArguments = {
   },
   startedAt: {
     shortName: 's',
-    description: 'date started, d/m/yy',
-    defaultValue: new Date(),
+    description: 'date started, d/M/yy',
+    defaultValue: format(new Date(), 'd/M/yy'),
     required: true,
     parse: (n: string) => {
       return parse(n, 'd/M/yy', new Date())
@@ -45,5 +45,8 @@ const run = async () => {
   }
 
   const program = initCommand(createArguments)
-  
+  const createOptions = await collectOptions(program, createArguments)
+  console.log('ddd', createOptions)
 }
+
+run()

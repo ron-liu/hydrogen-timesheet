@@ -3,5 +3,5 @@ program
   .version('0.0.1')
   .description('Hydrogen timesheet filler')
   .command('config', 'Config settings', { executableFile: 'command/config' })
-  .alias('c')
+  .command('create', 'Create timesheet', { executableFile: 'command/create' })
   .parse(process.argv)

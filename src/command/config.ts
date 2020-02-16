@@ -1,6 +1,4 @@
-import { Command, Option } from 'commander'
-import { prompt } from 'enquirer'
-import { ConfigCommandArguments, RawConfig } from '../types'
+import { ConfigCommandArguments } from '../types'
 import { parseCreateTimeSpanParams } from '../utils/date-time'
 import { initCommand, collectOptions } from '../utils/command'
 import Conf from 'conf'

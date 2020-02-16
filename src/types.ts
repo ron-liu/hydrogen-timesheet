@@ -62,7 +62,7 @@ export type CreateTimesheetParams = {
 export type CommandArgument<T> = {
   shortName: string
   description: string
-  defaultValue?: T
+  defaultValue?: string
   required: boolean
   parse?: (x: string) => T | undefined
   value?: T
