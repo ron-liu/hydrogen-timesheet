@@ -60,6 +60,7 @@ export type CreateTimesheetParams = {
 }
 
 export type CommandArgument<T> = {
+  type: 'toggle' | 'input'
   shortName: string
   description: string
   defaultValue?: string
