@@ -1,10 +1,5 @@
 import { Command, Option } from 'commander'
-import {
-  ConfigCommandArguments,
-  RawConfig,
-  CommandValue,
-  CommandArgument,
-} from '../types'
+import { CommandValue, CommandArgument } from '../types'
 import { prompt, Question } from 'inquirer'
 
 export const initCommand = <T>(commandArgs: T): Command => {

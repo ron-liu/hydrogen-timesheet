@@ -2,15 +2,25 @@ import {
   CreateCommandArguments,
   CommandArgument,
   CreateTimeSpanParams,
+  ExceptedEntry,
+  ExceptionArguments,
+  isBadFunctionResult,
 } from '../types'
 import { parse, format } from 'date-fns'
 import { validateRawConfg } from 'src/config/create-config'
-import { initCommand, collectOptions } from 'src/utils/command'
+import {
+  initCommand,
+  collectOptions,
+  mapCommandArgument,
+} from 'src/utils/command'
 import Conf from 'conf'
-import { parseCreateTimeSpanParams } from 'src/utils/date-time'
-import { prompt } from 'enquirer'
+import { parseCreateTimeSpanParams, DATE_FORMAT } from 'src/utils/date-time'
+import { prompt, Question } from 'inquirer'
+import { createTimesheet, Timesheet } from 'src/time-sheet/timesheet'
+import { fillForm } from 'src/pdf/fill'
 
 const run = async () => {
+  const conf = new Conf()
   const errors = validateRawConfg(conf.store)
   if (errors.length > 0) {
     console.error('No Config found, run config command first')
@@ -18,11 +28,38 @@ const run = async () => {
   }
 
   const program = initCommand(createArguments)
-  const createOptions = await collectOptions(program, createArguments)
-  prompt({})
+  const { countOfDays, createDate, startedAt } = await collectOptions(
+    program,
+    createArguments
+  )
+  let exceptions: Array<{ date: string; timeSpan: string }> = []
+  while (true) {
+    const { more } = await prompt([morePrompt])
+    if (!more) {
+      break
+    }
+    const { date, timeSpan } = await collectOptions(program, exceptionsArgument)
+    exceptions = [...exceptions, { date: date!, timeSpan: timeSpan! }]
+    console.log(date, timeSpan)
+  }
+  const timesheet = createTimesheet({
+    countOfDays: parseInt(countOfDays!),
+    createdAt: parse(createDate!, DATE_FORMAT, new Date()),
+    defaultTimeSpan: parseCreateTimeSpanParams(conf.store.defaultTimeSpan)
+      .result!,
+    startedAt: parse(startedAt!, DATE_FORMAT, new Date()),
+    exceptions: exceptions.map(x => ({
+      timeSpan: parseCreateTimeSpanParams(x.timeSpan).result!,
+      date: parse(x.date, DATE_FORMAT, new Date()),
+    })),
+  })
+  if (isBadFunctionResult<Timesheet>(timesheet)) {
+    console.error('Error occurs: ', timesheet.errors.join('\n'))
+    process.exit(-1)
+  }
+  fillForm(config)(timesheet.result)
 }
 
-const conf = new Conf()
 const createArguments: CreateCommandArguments = {
   countOfDays: {
     type: 'input',
@@ -58,6 +95,29 @@ const createArguments: CreateCommandArguments = {
   },
 }
 
+const exceptionsArgument: ExceptionArguments = {
+  date: {
+    type: 'input',
+    shortName: 's',
+    description: 'the exception date, d/M/yy',
+    required: true,
+    parse: (n: string) => {
+      return parse(n, 'd/M/yy', new Date())
+    },
+  },
+  timeSpan: {
+    type: 'input',
+    shortName: 'd',
+    description:
+      'exception time span, format: {start} to {end}[[, break], comment] like: 8:30 to 14:30, 00:30, leave early',
+    required: true,
+    parse: (s: string) => {
+      const ret = parseCreateTimeSpanParams(s)
+      if (!ret.errors) return ret.result!
+    },
+  },
+}
+
 const exceptionPrompt: CommandArgument<CreateTimeSpanParams> = {
   type: 'input',
   shortName: 'd',
@@ -70,11 +130,9 @@ const exceptionPrompt: CommandArgument<CreateTimeSpanParams> = {
   },
 }
 
-const morePrompt: CommandArgument<boolean> = {
-  type: 'toggle',
-  shortName: 'd',
-  description:
-    'exception time span, format: {start} to {end}[[, break], comment] like: 8:30 to 14:30, 00:30, leave early',
-  required: true,
+const morePrompt: Question = {
+  name: 'more',
+  type: 'confirm',
+  message: `Do you have more exceptions to entry?`,
 }
 run()

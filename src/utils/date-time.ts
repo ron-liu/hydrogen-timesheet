@@ -1,6 +1,6 @@
-import { format } from 'date-fns'
 import { Time, FunctionResult, CreateTimeSpanParams } from '../types'
-import { match } from 'ramda'
+
+export const DATE_FORMAT = 'd/M/yy'
 
 export const createTime = (hours: number, minutes: number = 0): Time => {
   const date: [number, number, number] = [

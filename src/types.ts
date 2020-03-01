@@ -89,4 +89,9 @@ export type CreateCommandArguments = {
   startedAt: CommandArgument<Date>
 }
 
+export type ExceptionArguments = {
+  date: CommandArgument<Date>
+  timeSpan: CommandArgument<CreateTimeSpanParams>
+}
+
 export type RawConfig = CommandValue<ConfigCommandArguments>
