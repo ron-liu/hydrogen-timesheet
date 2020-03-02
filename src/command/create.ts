@@ -5,23 +5,22 @@ import {
   ExceptedEntry,
   ExceptionArguments,
   isBadFunctionResult,
+  Config,
+  CreateTimesheetParams,
 } from '../types'
 import { parse, format } from 'date-fns'
 import { validateRawConfg } from 'src/config/create-config'
-import {
-  initCommand,
-  collectOptions,
-  mapCommandArgument,
-} from 'src/utils/command'
+import { initCommand, collectOptions } from 'src/utils/command'
 import Conf from 'conf'
 import { parseCreateTimeSpanParams, DATE_FORMAT } from 'src/utils/date-time'
 import { prompt, Question } from 'inquirer'
 import { createTimesheet, Timesheet } from 'src/time-sheet/timesheet'
 import { fillForm } from 'src/pdf/fill'
-
+type ExceptionStringObj = { date: string; timeSpan: string }
 const run = async () => {
   const conf = new Conf()
   const errors = validateRawConfg(conf.store)
+  const config = mapStoreToConfig(conf.store)
   if (errors.length > 0) {
     console.error('No Config found, run config command first')
     process.exit(-1)
@@ -32,7 +31,7 @@ const run = async () => {
     program,
     createArguments
   )
-  let exceptions: Array<{ date: string; timeSpan: string }> = []
+  let exceptions: ExceptionStringObj[] = []
   while (true) {
     const { more } = await prompt([morePrompt])
     if (!more) {
@@ -58,6 +57,43 @@ const run = async () => {
     process.exit(-1)
   }
   fillForm(config)(timesheet.result)
+}
+
+export const mapToTimesheet = (
+  createArgumentOptions: any,
+  exceptions: ExceptionStringObj[],
+  defaultTimeSpan: CreateTimeSpanParams
+): CreateTimesheetParams => {
+  const { countOfDays, createDate, startedAt } = createArgumentOptions
+  return {
+    countOfDays: parseInt(countOfDays!),
+    createdAt: parse(createDate!, DATE_FORMAT, new Date()),
+    defaultTimeSpan: defaultTimeSpan,
+    startedAt: parse(startedAt!, DATE_FORMAT, new Date()),
+    exceptions: exceptions.map(x => ({
+      timeSpan: parseCreateTimeSpanParams(x.timeSpan).result!,
+      date: parse(x.date, DATE_FORMAT, new Date()),
+    })),
+  }
+}
+
+export const mapStoreToConfig = (store: any): Config => {
+  const {
+    fullName,
+    position,
+    purchaseOrderNumber,
+    client,
+    reportTo,
+    reportToPosition,
+    defaultTimeSpan,
+  } = store
+  const createDefaultTimeSpan = parseCreateTimeSpanParams(defaultTimeSpan)
+  return {
+    consultant: { name: fullName, position, purchaseOrderNumber },
+    client,
+    reportTo: { name: reportTo, position: reportToPosition },
+    defaultTimeSpan: createDefaultTimeSpan.result!,
+  }
 }
 
 const createArguments: CreateCommandArguments = {
