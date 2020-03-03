@@ -1,16 +1,23 @@
 import HummusRecipe from 'hummus-recipe'
 import { Timesheet } from '../time-sheet/timesheet'
-import { format } from 'date-fns'
+import { format, add } from 'date-fns'
 import { Config } from '../types'
 
-export const fillForm = (config: Config) => (timesheet: Timesheet) => {
-  const pdfDoc = new HummusRecipe('./template.pdf', './output.pdf')
+export const fillForm = (config: Config) => (timesheet: Timesheet): string => {
+  const outputFileName = `./timesheet_${format(
+    timesheet.startedAt,
+    'yyyy-MM-dd'
+  )}-to-${format(
+    add(timesheet.startedAt, { days: timesheet.timeSpans.length - 1 }),
+    'yyyy-MM-dd'
+  )}.pdf`
+  const pdfDoc = new HummusRecipe('./template.pdf', outputFileName)
   const actions = [...fillStaticInfo(config), ...fillTimespans(timesheet)]
   actions
     .reduce((prev, act) => act(prev), pdfDoc.editPage(1))
     .endPage()
     .endPDF()
-  console.log('done')
+  return outputFileName
 }
 
 const fillStaticInfo = (

@@ -9,14 +9,15 @@ import {
   CreateTimesheetParams,
 } from '../types'
 import { parse, format } from 'date-fns'
-import { validateRawConfg } from 'src/config/create-config'
+import { validateRawConfg } from '../config/create-config'
 import { initCommand, collectOptions } from 'src/utils/command'
 import Conf from 'conf'
 import { parseCreateTimeSpanParams, DATE_FORMAT } from 'src/utils/date-time'
 import { prompt, Question } from 'inquirer'
 import { createTimesheet, Timesheet } from 'src/time-sheet/timesheet'
 import { fillForm } from 'src/pdf/fill'
-type ExceptionStringObj = { date: string; timeSpan: string }
+import { CommanderStatic, Command } from 'commander'
+type ExceptionStringParams = { date: string; timeSpan: string }
 const run = async () => {
   const conf = new Conf()
   const errors = validateRawConfg(conf.store)
@@ -27,11 +28,21 @@ const run = async () => {
   }
 
   const program = initCommand(createArguments)
-  const { countOfDays, createDate, startedAt } = await collectOptions(
-    program,
-    createArguments
+  const createTimesheetParmas = await collectOptions(program, createArguments)
+  const exceptions = await collectExceptions(program)
+  const timesheet = createTimesheet(
+    mapToTimesheet(createTimesheetParmas, exceptions, config.defaultTimeSpan)
   )
-  let exceptions: ExceptionStringObj[] = []
+  if (isBadFunctionResult<Timesheet>(timesheet)) {
+    console.error('Error occurs: ', timesheet.errors.join('\n'))
+    process.exit(-1)
+  }
+  const outputFileName = fillForm(config)(timesheet.result)
+  console.log(`Done, check ${outputFileName}`)
+}
+
+const collectExceptions = async (program: Command) => {
+  let exceptions: ExceptionStringParams[] = []
   while (true) {
     const { more } = await prompt([morePrompt])
     if (!more) {
@@ -41,27 +52,12 @@ const run = async () => {
     exceptions = [...exceptions, { date: date!, timeSpan: timeSpan! }]
     console.log(date, timeSpan)
   }
-  const timesheet = createTimesheet({
-    countOfDays: parseInt(countOfDays!),
-    createdAt: parse(createDate!, DATE_FORMAT, new Date()),
-    defaultTimeSpan: parseCreateTimeSpanParams(conf.store.defaultTimeSpan)
-      .result!,
-    startedAt: parse(startedAt!, DATE_FORMAT, new Date()),
-    exceptions: exceptions.map(x => ({
-      timeSpan: parseCreateTimeSpanParams(x.timeSpan).result!,
-      date: parse(x.date, DATE_FORMAT, new Date()),
-    })),
-  })
-  if (isBadFunctionResult<Timesheet>(timesheet)) {
-    console.error('Error occurs: ', timesheet.errors.join('\n'))
-    process.exit(-1)
-  }
-  fillForm(config)(timesheet.result)
+  return exceptions
 }
 
 export const mapToTimesheet = (
   createArgumentOptions: any,
-  exceptions: ExceptionStringObj[],
+  exceptions: ExceptionStringParams[],
   defaultTimeSpan: CreateTimeSpanParams
 ): CreateTimesheetParams => {
   const { countOfDays, createDate, startedAt } = createArgumentOptions

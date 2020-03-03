@@ -11,7 +11,7 @@
     "test": "jest"
   },
   "keywords": [],
-  "author": "",
+  "author": "Ron Liu",
   "license": "ISC",
   "dependencies": {
     "@types/inquirer": "^6.5.0",

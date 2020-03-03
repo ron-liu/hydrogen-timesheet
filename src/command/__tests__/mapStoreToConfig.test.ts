@@ -11,18 +11,24 @@ it('should map correctly', () => {
     reportToPosition: 'dm',
     defaultTimeSpan: '8 to 14:30, 00:30',
   }
-  expect(mapStoreToConfig(store)).toEqual({
+  const recieved = mapStoreToConfig(store)
+  expect(recieved).toMatchObject({
     consultant: {
       name: 'ron',
-      position: 'Dev',
+      position: 'dev',
       purchaseOrderNumber: '13432',
     },
     client: 'seek',
-    reportTo: { name: 'jmet', position: 'DM' },
-    defaultTimeSpan: {
-      start: createTime(8),
-      end: createTime(14, 30),
-      breaks: createTime(0, 30),
-    },
+    reportTo: { name: 'jmet', position: 'dm' },
   })
+  expect(recieved.defaultTimeSpan.start.formatAll()).toEqual(
+    createTime(8).formatAll()
+  )
+  expect(recieved.defaultTimeSpan.end.formatAll()).toEqual(
+    createTime(14, 30).formatAll()
+  )
+  expect(recieved.defaultTimeSpan.breaks!.formatAll()).toEqual(
+    createTime(0, 30).formatAll()
+  )
+  expect(recieved.defaultTimeSpan.comment).toBeUndefined()
 })
