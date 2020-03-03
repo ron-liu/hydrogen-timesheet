@@ -33,10 +33,10 @@ it('formatTime should work', () => {
 
 it('getWorkingdays should work', () => {
   const t1 = createTime(2, 30)
-  expect(t1.formatWorkingDays(8)).toEqual('0.3125 d')
+  expect(t1.formatWorkingDays(8)).toEqual('0.313d')
 
   const t2 = createTime(2, 30).add(createTime(7, 30))
-  expect(t2.formatWorkingDays(8)).toEqual('1.25 d')
+  expect(t2.formatWorkingDays(8)).toEqual('1.25d')
 })
 
 it('parseCreateTimeParams should work', () => {

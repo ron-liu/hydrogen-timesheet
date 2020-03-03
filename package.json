@@ -1,14 +1,15 @@
 {
   "name": "hydrogen-timesheet",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "",
-  "main": "index.js",
+  "main": "./dist/index.js",
   "scripts": {
-    "build": "tsc",
+    "build": "rm -rf dist && tsc && cp template.pdf ./dist",
     "check-syntax": "tsc -w",
     "dev": "node -r tsconfig-paths/register -r ts-node/register ./src/index.ts",
     "smaple": "ts-node ./src/sample.ts --watch",
-    "test": "jest"
+    "test": "jest",
+    "pub": "yarn && yarn build && npx np"
   },
   "keywords": [],
   "author": "Ron Liu",
