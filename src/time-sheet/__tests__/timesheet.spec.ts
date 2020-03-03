@@ -1,5 +1,5 @@
 import { createTimesheet } from '../timesheet'
-import { createTime, createDate } from '../utils'
+import { createTime, createDate } from '../../utils/date-time'
 
 it('normal should work', () => {
   const timesheet = createTimesheet({
@@ -33,5 +33,5 @@ it('normal should work', () => {
   })
   expect(timesheet.errors).toBeUndefined()
   expect(timesheet.result?.timeSpans).toHaveLength(14)
-  expect(timesheet.result?.total).toEqual(createTime(8 * 7 + 2))
+  expect(timesheet.result?.total).toMatchObject({ days: 2, hours: 10 })
 })

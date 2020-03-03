@@ -1,4 +1,4 @@
-import { Errors } from "./types";
+import { Errors } from "../types";
 export type Validate<Type> = (x: Type) => boolean;
 export type Validator<Type> = {
   validate: Validate<Type>;

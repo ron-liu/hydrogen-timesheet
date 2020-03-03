@@ -1,7 +1,7 @@
-import { Validator, validateParams } from './validate'
-import { FunctionResult, CreateTimeSpanParams, Time } from './types'
+import { Validator, validateParams } from '../utils/validate'
+import { FunctionResult, CreateTimeSpanParams, Time } from '../types'
 import { format } from 'date-fns'
-import { createTime } from './utils'
+import { createTime } from '../utils/date-time'
 
 export const createTimeSpan = (
   parmas: CreateTimeSpanParams,
@@ -61,8 +61,6 @@ export type TimeSpan = {
   start?: Time
   end?: Time
   breaks?: Time
-  standardWork?: Time
-  overwork?: Time
   totalWork: Time
   comment: string
 }

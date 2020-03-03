@@ -1,3 +1,6 @@
+import { Command } from 'commander'
+import { TimeSpan } from './time-sheet/time-span'
+
 export type Errors = string[]
 export type GoodFunctionResult<T> = { result: T; errors?: Errors }
 export type BadFunctionResult<T> = { result?: T; errors: Errors }
@@ -11,8 +14,10 @@ export const isBadFunctionResult = <T>(
   fr: FunctionResult<T>
 ): fr is BadFunctionResult<T> => (fr.errors?.length ?? 0) > 0
 export interface Time {
-  getTotalMiutes: () => number
-  get: () => [number, number, number]
+  readonly totalMiutes: number
+  readonly days: number
+  readonly hours: number
+  readonly minutes: number
   formatTime: () => string
   formatAll: () => string
   add: (x: Time) => Time
@@ -53,3 +58,40 @@ export type CreateTimesheetParams = {
   defaultTimeSpan: CreateTimeSpanParams
   exceptions?: ExceptedEntry[]
 }
+
+export type CommandArgument<T> = {
+  type: 'toggle' | 'input'
+  shortName: string
+  description: string
+  defaultValue?: string
+  required: boolean
+  parse?: (x: string) => T | undefined
+  value?: T
+}
+
+export type CommandValue<CommandArguments> = {
+  [key in keyof CommandArguments]: string
+}
+
+export type ConfigCommandArguments = {
+  fullName: CommandArgument<string>
+  position: CommandArgument<string>
+  purchaseOrderNumber: CommandArgument<string>
+  client: CommandArgument<string>
+  reportTo: CommandArgument<string>
+  reportToPosition: CommandArgument<string>
+  defaultTimeSpan: CommandArgument<CreateTimeSpanParams>
+}
+
+export type CreateCommandArguments = {
+  countOfDays: CommandArgument<number>
+  createDate: CommandArgument<Date>
+  startedAt: CommandArgument<Date>
+}
+
+export type ExceptionArguments = {
+  date: CommandArgument<Date>
+  timeSpan: CommandArgument<CreateTimeSpanParams>
+}
+
+export type RawConfig = CommandValue<ConfigCommandArguments>
