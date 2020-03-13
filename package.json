@@ -1,6 +1,6 @@
 {
   "name": "hydrogen-timesheet",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "",
   "main": "./dist/index.js",
   "scripts": {
@@ -12,7 +12,7 @@
     "pub": "yarn && yarn build && npx np"
   },
   "keywords": [],
-  "author": "Ron Liu",
+  "author": "Ron Liu <ronliu2k@gmail.com>",
   "license": "ISC",
   "dependencies": {
     "@types/inquirer": "^6.5.0",
