@@ -47,6 +47,7 @@
     "dist",
     "package-lock.json",
     "template.pdf",
+    "npm-shrinkwrap.json",
     "README.md"
   ]
 }
