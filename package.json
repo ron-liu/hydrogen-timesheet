@@ -37,7 +37,7 @@
     "typescript": "^3.7.4"
   },
   "bin": {
-    "hydrogen-timesheet": "./dist/index.js"
+    "hydrogen-timesheet": "./dist/src/index.js"
   },
   "publishConfig": {
     "access": "public",
