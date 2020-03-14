@@ -16,7 +16,7 @@
       {
         "root": ["./src"],
         "alias": {
-          "@mynamespace": "./src"
+          "src": "./src"
         },
         "extensions": [".js", ".ts"]
       }
