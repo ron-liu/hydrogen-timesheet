@@ -49,5 +49,8 @@
     "template.pdf",
     "npm-shrinkwrap.json",
     "README.md"
-  ]
+  ],
+  "_moduleAliases": {
+    "src": "dist"
+  }
 }
