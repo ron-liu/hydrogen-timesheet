@@ -1,6 +1,6 @@
 {
   "name": "hydrogen-timesheet",
-  "version": "1.1.8",
+  "version": "1.1.9",
   "description": "",
   "main": "./dist/index.js",
   "scripts": {
@@ -44,6 +44,9 @@
     "registry": "https://registry.npmjs.org/"
   },
   "files": [
-    "dist"
+    "dist",
+    "package-lock.json",
+    "template.pdf",
+    "README.md"
   ]
 }
