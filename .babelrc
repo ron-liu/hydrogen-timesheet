@@ -14,10 +14,10 @@
     [
       "module-resolver",
       {
-        "root": ["./src"],
-        "alias": {
-          "src": "./src"
-        },
+        "root": ["."],
+        // "alias": {
+        //   "src": "./src"
+        // },
         "extensions": [".js", ".ts"]
       }
     ],
