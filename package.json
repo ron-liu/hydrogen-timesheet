@@ -38,5 +38,9 @@
   },
   "bin": {
     "hydrogen-timesheet": "./dist/index.js"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   }
 }
