@@ -28,7 +28,7 @@ export const createTimesheet = (
   } = normaliseCreateTimesheetParams(params)
   const timeSpans = pipe(
     () => range(0, countOfDays),
-    map(d => addDays(startedAt, d)),
+    map((d) => addDays(startedAt, d)),
     map<Date, FunctionResult<TimeSpan>>(
       ifElse(
         isWorkingDay,
@@ -38,8 +38,8 @@ export const createTimesheet = (
     )
   )()
   const timeSpansErrors = timeSpans
-    .filter(x => isBadFunctionResult(x))
-    .map(x => x.errors ?? [])
+    .filter((x) => isBadFunctionResult(x))
+    .map((x) => x.errors ?? [])
     .reduce((acc, x) => [...acc, ...x], [])
 
   if (timeSpansErrors.length > 0) {
@@ -50,10 +50,10 @@ export const createTimesheet = (
         startedAt,
         createdAt,
         timeSpans: timeSpans.map(
-          x => (x as GoodFunctionResult<TimeSpan>).result
+          (x) => (x as GoodFunctionResult<TimeSpan>).result
         ),
         total: timeSpans
-          .map(x => (x as GoodFunctionResult<TimeSpan>).result.totalWork)
+          .map((x) => (x as GoodFunctionResult<TimeSpan>).result.totalWork)
           .reduce((acc, x) => acc.add(x), createTime(0)),
       },
     }
@@ -61,38 +61,41 @@ export const createTimesheet = (
 }
 
 const getTimeSpanForNonWorkingDay = (date: Date): FunctionResult<TimeSpan> => ({
-  result: { comment: 'Weekend or Holiday', totalWork: createTime(0), date },
+  result: {
+    comment: 'weekend/holiday/mandatory leave',
+    totalWork: createTime(0),
+    date,
+  },
   errors: [],
 })
 
-const getExceptionTimeSpan = (exceptions: ExceptedEntry[]) => (
-  day: Date
-): ExceptedEntry | void => {
-  const index = binarySearch(
-    exceptions,
-    day,
-    (a, b) => a.date.getTime() - b.getTime()
-  )
-  if (index >= 0) return exceptions[index]
-}
-
-const getTimeSpanForWorkingDay = (
-  exceptions: ExceptedEntry[],
-  defaultTimeSpan: CreateTimeSpanParams
-) => (date: Date) =>
-  pipe<Date, ExceptedEntry | void, FunctionResult<TimeSpan>>(
-    getExceptionTimeSpan(exceptions),
-    ifElse(
-      isNil,
-      () => createTimeSpan(defaultTimeSpan, date),
-      exception => createTimeSpan(exception.timeSpan, exception.date)
+const getExceptionTimeSpan =
+  (exceptions: ExceptedEntry[]) =>
+  (day: Date): ExceptedEntry | void => {
+    const index = binarySearch(
+      exceptions,
+      day,
+      (a, b) => a.date.getTime() - b.getTime()
     )
-  )(date)
+    if (index >= 0) return exceptions[index]
+  }
+
+const getTimeSpanForWorkingDay =
+  (exceptions: ExceptedEntry[], defaultTimeSpan: CreateTimeSpanParams) =>
+  (date: Date) =>
+    pipe<Date, ExceptedEntry | void, FunctionResult<TimeSpan>>(
+      getExceptionTimeSpan(exceptions),
+      ifElse(
+        isNil,
+        () => createTimeSpan(defaultTimeSpan, date),
+        (exception) => createTimeSpan(exception.timeSpan, exception.date)
+      )
+    )(date)
 
 const startDateShouldBeMonday: CreateTimesheetValidator = {
-  message: x =>
+  message: (x) =>
     `startDate should be Monday, but it is NO.${x.startedAt.getDay()} of the week`,
-  validate: x => x.startedAt.getDay() === 1,
+  validate: (x) => x.startedAt.getDay() === 1,
 }
 
 const validate = validateParams([startDateShouldBeMonday])
@@ -135,10 +138,27 @@ const publicHolidays = [
   createDate(2020, 4, 10),
   createDate(2020, 4, 13),
   createDate(2020, 4, 25),
+  createDate(2020, 5, 4),
+  createDate(2020, 5, 18),
   createDate(2020, 6, 8),
+  createDate(2020, 6, 29),
+  createDate(2020, 10, 23),
   createDate(2020, 11, 3),
   createDate(2020, 12, 25),
   createDate(2020, 12, 28),
+  createDate(2021, 1, 1),
+  createDate(2021, 1, 26),
+  createDate(2021, 1, 29),
+  createDate(2021, 2, 1),
+  createDate(2021, 2, 2),
+  createDate(2021, 2, 3),
+  createDate(2021, 2, 4),
+  createDate(2021, 2, 5),
+  createDate(2021, 3, 8),
+  createDate(2021, 4, 2),
+  createDate(2021, 4, 5),
+  createDate(2021, 6, 14),
+  createDate(2021, 7, 2),
 ]
 
 type CreateTimesheetValidator = Validator<CreateTimesheetParams>
